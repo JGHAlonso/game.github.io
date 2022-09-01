@@ -14,7 +14,7 @@
     var cv= null;
     var ctx=null;
     var player1=null;
-    var player2=null;
+    var meteorito1=null;
     var super_y=450,super_x=250;
     var score=0;
     var direction = 'right';
@@ -30,31 +30,37 @@ function start (){
        ctx=cv.getContext('2d');
        player1=new  Cuadrado(super_x,super_y,20,20,'red');
 
-       player2=new Cuadrado(generateRandomInteger(500),generateRandomInteger(500),40,40,'yellow');
-
-       pared=new  Cuadrado(100,100,50,300,'blue');
+       meteorito1=new Cuadrado(generateRandomInteger(500),generateRandomInteger(500),30,30,'yellow');
+       meteorito2=new Cuadrado(generateRandomInteger(500),generateRandomInteger(500),30,30,'yellow');
+       pared=new  Cuadrado(0,0,50,300,'blue');
 
        paint();
 
 }
 
 function paint(){
-    espacio.src='espacio.png';
+    espacio.src='espacio.jpg';
     ctx.drawImage(espacio,45,67,50,50);
     nave.src='nave-espacial.png';
     meteorito.src='meteorito.png';
     ardillaAud.src='ardilla_aud.mp3';
     muro.src='pared.png';
     window.requestAnimationFrame(paint)
+    
+    ctx.drawImage(espacio,pared.x,pared.y,500,500);
     ctx.fillStyle="white";
     ctx.fillRect(0,0,500,500);
-    ctx.fillStyle="black";
-    ctx.fillText('score:'+score+'speed:'+speed,30,20);
+    ctx.fillStyle="white";
+    
+    ctx.drawImage(espacio,pared.x,pared.y,500,500);
+    
     ctx.drawImage(nave,player1.x,player1.y,50,50);
-    ctx.drawImage(meteorito,player2.x,player2.y,50,50);
+    ctx.drawImage(meteorito,meteorito1.x,meteorito1.y,30,30);
+    ctx.drawImage(meteorito,meteorito2.x,meteorito2.y,30,30);
+    ctx.fillText('score:'+score+'speed:'+speed,30,20);
     //player1.dibujar(ctx);
     //player2.dibujar(ctx);
-    ctx.drawImage(muro,pared.x,pared.y,50,300);
+    
     //pared.dibujar(ctx); 
     if(pause){
         ctx.fillSyle="rgba(0,0,0,0.5)";
@@ -69,17 +75,31 @@ function paint(){
 } 
 function update (){
 
-  //jugador 2
-    player2.x+=speed;
-    if (player2.x>500 ){
-            player2.x=0;
+  //meteoritos
+  
+    if (meteorito1.x>500 ){
+        meteorito1.x=0;
         }
+        meteorito1.x+=speed;
 
+    if (meteorito2.x>500 ){
+        meteorito2.x=0;
+        }
+        meteorito2.x+=speed;
 
 
 //jugador1
      
-     if (player1.se_tocan(player2)){
+     if (player1.se_tocan(meteorito1)){
+        player1.x=250;
+        player1.y=450;
+        score+=10;
+        speed+=1;
+
+        ardillaAud.play();
+        console.log("hola");
+     }
+     if (player1.se_tocan(meteorito2)){
         player1.x=250;
         player1.y=450;
         score+=10;
@@ -108,16 +128,7 @@ if (e.which ==68 || e.wich == 39){
 if (e.which==32){
     pause=(pause)?false:true;
 }
-if(direction == 'right'){
-        player1.x+=10;
-       
-        
-        
-     }
-     if(direction == 'left'){
-        player1.x-=10;
-        
-     }
+
     if (direction == 'down'){
         player1.y+=10;
        
